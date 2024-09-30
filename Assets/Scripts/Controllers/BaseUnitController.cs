@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public abstract class BaseUnitController : MonoBehaviour
@@ -5,7 +6,7 @@ public abstract class BaseUnitController : MonoBehaviour
     [SerializeField] private float _jumpForce = 400f;
     [SerializeField] private float _moveSpeedForce = 10f;
     [Range(0, .3f)][SerializeField] private float _movementSmoothing = .05f;
-    [SerializeField] private Vector2 _groundCheckPoint;
+    [SerializeField] private List<Vector2> _groundCheckPoints;
     [SerializeField] private float _groundRaycastLength = .2f;
     [SerializeField] private LayerMask _groundLayer;
     [SerializeField] private bool _debug;
@@ -16,7 +17,7 @@ public abstract class BaseUnitController : MonoBehaviour
     private Vector3 _currentVelocity = Vector3.zero;
 
 
-    protected void Awake()
+    protected virtual void Awake()
     {
         _rigidbody = GetComponent<Rigidbody2D>();
     }
@@ -43,7 +44,8 @@ public abstract class BaseUnitController : MonoBehaviour
         }
     }
 
-    public virtual void MoveTo(Vector2 newPosition) {
+    public virtual void MoveTo(Vector2 newPosition)
+    {
         transform.position = newPosition;
     }
 
@@ -56,21 +58,31 @@ public abstract class BaseUnitController : MonoBehaviour
         transform.localScale = theScale;
     }
 
-    protected virtual void CheckIfGrounded() => _isGrounded = Physics2D.Raycast(transform.position + (Vector3)_groundCheckPoint, -transform.up, _groundRaycastLength, _groundLayer);
+    protected virtual void CheckIfGrounded()
+    {
+        foreach (Vector3 point in _groundCheckPoints)
+        {
+            _isGrounded = Physics2D.Raycast(transform.position + point, -transform.up, _groundRaycastLength, _groundLayer);
+
+            if (_isGrounded)
+                break;
+        }
+    }
 
     void OnDrawGizmos()
     {
         if (!_debug)
             return;
 
-        var groundCheckPointPos = transform.position + (Vector3)_groundCheckPoint;
+        foreach (Vector3 point in _groundCheckPoints)
+        {
+            var groundCheckPointPos = transform.position + point;
 
-        Gizmos.color = Color.white;
+            Gizmos.color = Color.white;
+            Gizmos.DrawSphere(groundCheckPointPos, 0.05f);
 
-        Gizmos.DrawSphere(groundCheckPointPos, 0.05f);
-
-        Gizmos.color = _isGrounded ? Color.red : Color.yellow;
-
-        Gizmos.DrawLine(groundCheckPointPos, groundCheckPointPos + -transform.up * _groundRaycastLength);
+            Gizmos.color = _isGrounded ? Color.red : Color.yellow;
+            Gizmos.DrawLine(groundCheckPointPos, groundCheckPointPos + -transform.up * _groundRaycastLength);
+        }
     }
 }

@@ -33,6 +33,10 @@ public class GameController : MonoBehaviour
         _currentLevel.LevelFinishTrigger.OnTriggerEnter += OnEndLevel;
     }
 
+    public static void CollectCollectable(BaseCollectable collectable) {
+        
+    }
+
     private void SpawnPlayer() => _player.MoveTo(_currentLevel.SpawnPoint.position);
 
     private void RespawnPlayer()

@@ -5,41 +5,71 @@ public class GameController : MonoBehaviour
 {
     [SerializeField] private CinemachineVirtualCamera _camera;
     [SerializeField] private PlayerController _player;
-    [SerializeField] private Transform _spawnPoint;
+    [SerializeField] private LevelView _currentLevel;
 
-    [SerializeField] private BaseTrigger _fallDeathTrigger;
-    [SerializeField] private BaseTrigger _endLevelTrigger;
+    private static GameController _instance;
+
+    private static GameController Instance
+    {
+        get => _instance;
+        set => _instance ??= value;
+    }
 
     private void Awake()
     {
-        _fallDeathTrigger.OnTriggerEnter += OnFallDeath;
-        _endLevelTrigger.OnTriggerEnter += OnEndLevel;
+        Instance = this;
+        Init(_currentLevel);
     }
 
-    private void RespawnPlayer() {
+    public static void Init(LevelView level) => Instance.InitInternal(level);
+
+    private void InitInternal(LevelView level)
+    {
+        // if (_currentLevel)
+        //     ClearLevel();
+
+        _currentLevel = Instantiate<LevelView>(level);
+        _currentLevel.FallDeathTrigger.OnTriggerEnter += OnFallDeath;
+        _currentLevel.LevelFinishTrigger.OnTriggerEnter += OnEndLevel;
+    }
+
+    private void SpawnPlayer() => _player.MoveTo(_currentLevel.SpawnPoint.position);
+
+    private void RespawnPlayer()
+    {
         _player.SetHurtAnimation(false);
-        _player.MoveTo(_spawnPoint.position);
+        SpawnPlayer();
+        _camera.enabled = true;
         _camera.LookAt = _player.transform;
         _camera.Follow = _player.transform;
         InputController.EnableInput();
     }
 
-    private void OnFallDeath() {
+    private void OnFallDeath()
+    {
         InputController.DisableInput();
         _camera.LookAt = null;
         _camera.Follow = null;
+        _camera.enabled = false;
         _player.SetHurtAnimation(true);
         Invoke(nameof(RespawnPlayer), 2);
     }
 
-    private void OnEndLevel() {
+    private void OnEndLevel()
+    {
         InputController.DisableInput();
-         _player.SetHurtAnimation(true);
+        _player.SetHurtAnimation(true);
     }
 
-    void OnDestroy()
+    private void ClearLevel()
     {
-        _fallDeathTrigger.OnTriggerEnter -= OnFallDeath;
-        _endLevelTrigger.OnTriggerEnter -= OnEndLevel;
+        _currentLevel.FallDeathTrigger.OnTriggerEnter -= OnFallDeath;
+        _currentLevel.LevelFinishTrigger.OnTriggerEnter -= OnEndLevel;
+        Destroy(_currentLevel);
+    }
+
+    private void OnDestroy()
+    {
+        ClearLevel();
     }
 }

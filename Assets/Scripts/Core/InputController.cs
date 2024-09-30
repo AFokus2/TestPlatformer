@@ -11,24 +11,30 @@ public class InputController : MonoBehaviour
 
     private static InputController _instance;
 
-    private bool Enabled {get; set;} = true;
+    private static InputController Instance
+    {
+        get => _instance;
+        set => _instance ??= value;
+    }
+
+    private bool Enabled { get; set; } = true;
 
     private void Awake()
     {
-        if (!_instance)
-            _instance = this;
+        Instance = this;
 
-         jumpButton.onClick.AddListener(OnJumpInvokeInternal);
+        jumpButton.onClick.AddListener(OnJumpInvokeInternal);
     }
 
-    public static void EnableInput() => _instance.Enabled = true;
+    public static void EnableInput() => Instance.Enabled = true;
 
-    public static void DisableInput() => _instance.Enabled = false;
+    public static void DisableInput() => Instance.Enabled = false;
 
-    public static float GetHorizontalInput() => _instance.Enabled ? _instance.joystick.Horizontal : 0;
+    public static float GetHorizontalInput() => Instance.Enabled ? Instance.joystick.Horizontal : 0;
 
-    private void OnJumpInvokeInternal(){
-        if(Enabled)
+    private void OnJumpInvokeInternal()
+    {
+        if (Enabled)
             OnJump?.Invoke();
     }
 }

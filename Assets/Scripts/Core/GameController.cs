@@ -2,24 +2,16 @@ using System.Collections;
 using Cinemachine;
 using UnityEngine;
 
-public class GameController : MonoBehaviour
+public class GameController : Singleton<GameController>
 {
     [SerializeField] private CinemachineVirtualCamera _camera;
     [SerializeField] private PlayerController _player;
     [SerializeField] private LevelView _currentLevel;
 
-    private static GameController _instance;
-
-    private static GameController Instance
-    {
-        get => _instance;
-        set => _instance ??= value;
-    }
-
     private void Awake()
     {
-        Instance = this;
         Init(_currentLevel);
+        DontDestroyOnLoad(gameObject);
     }
 
     public static void Init(LevelView level) => Instance.InitInternal(level);
@@ -41,6 +33,8 @@ public class GameController : MonoBehaviour
         _currentLevel = Instantiate<LevelView>(level);
         _currentLevel.FallDeathTrigger.OnTriggerEnter += OnFallDeath;
         _currentLevel.LevelFinishTrigger.OnTriggerEnter += OnEndLevel;
+        _player.gameObject.SetActive(true);
+        SpawnPlayer();
     }
 
     private void KillEnemyInternal(BaseEnemyView enemy)
@@ -94,6 +88,7 @@ public class GameController : MonoBehaviour
         _currentLevel.FallDeathTrigger.OnTriggerEnter -= OnFallDeath;
         _currentLevel.LevelFinishTrigger.OnTriggerEnter -= OnEndLevel;
         Destroy(_currentLevel);
+        _player.gameObject.SetActive(false);
     }
 
     private void OnDestroy()

@@ -2,27 +2,17 @@ using System;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class InputController : MonoBehaviour
+public class InputController : Singleton<InputController>
 {
     public static event Action OnJump;
 
     [SerializeField] protected Joystick joystick;
     [SerializeField] protected Button jumpButton;
 
-    private static InputController _instance;
-
-    private static InputController Instance
-    {
-        get => _instance;
-        set => _instance ??= value;
-    }
-
     private bool Enabled { get; set; } = true;
 
-    private void Awake()
+    private void Start()
     {
-        Instance = this;
-
         jumpButton.onClick.AddListener(OnJumpInvokeInternal);
     }
 

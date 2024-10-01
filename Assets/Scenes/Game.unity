@@ -386,7 +386,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _mainCanvas: {fileID: 1302994897}
   _prefabs:
+  - {fileID: 6980708889965947059, guid: c8ecdbced5e1709488f69652434daf09, type: 3}
+  - {fileID: 2227049857724884297, guid: 399c13b0701f29d47af94102a0e166fa, type: 3}
   - {fileID: 2808766921479669505, guid: 095a33073e2ac0241b68d1db403e1fb5, type: 3}
+  - {fileID: 7612268502057678443, guid: d5f147ca29835a24796b4219014d0efc, type: 3}
+  - {fileID: 7569468278873000271, guid: bfe45eabc81325944a112bce7383e035, type: 3}
 --- !u!1 &1201563903
 GameObject:
   m_ObjectHideFlags: 0
@@ -691,7 +695,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _camera: {fileID: 1470991342}
   _player: {fileID: 1960181375}
-  _currentLevel: {fileID: 7907517028985461720, guid: 8f605ada0e718624eb1e9ab34443b7e2, type: 3}
 --- !u!1001 &1803592044445282719
 PrefabInstance:
   m_ObjectHideFlags: 0

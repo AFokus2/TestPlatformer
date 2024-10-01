@@ -6,15 +6,23 @@ public class GameController : Singleton<GameController>
 {
     [SerializeField] private CinemachineVirtualCamera _camera;
     [SerializeField] private PlayerController _player;
-    [SerializeField] private LevelView _currentLevel;
+    private LevelView _currentLevel;
+
+    private IActionData _congratulationsData;
 
     private void Awake()
     {
-        Init(_currentLevel);
+        _congratulationsData = new ActionData();
+        _congratulationsData.Data = "Congratulations!";
+        _congratulationsData.ConfirmButtonTitle = "Yeeey";
+        _congratulationsData.ConfirmButton += ClearLevel;
+        _congratulationsData.ConfirmButton += UIManager.OpenWindow<MainMenuWindow>;
         DontDestroyOnLoad(gameObject);
     }
 
     public static void Init(LevelView level) => Instance.InitInternal(level);
+
+    public static void ClearLevel() => Instance.ClearLevelInternal();
 
     public static void CollectCollectable(BaseCollectable collectable)
     {
@@ -27,10 +35,10 @@ public class GameController : Singleton<GameController>
 
     private void InitInternal(LevelView level)
     {
-        // if (_currentLevel)
-        //     ClearLevel();
+        if (_currentLevel)
+            ClearLevel();
 
-        _currentLevel = Instantiate<LevelView>(level);
+        _currentLevel = Instantiate<LevelView>(level, transform);
         _currentLevel.FallDeathTrigger.OnTriggerEnter += OnFallDeath;
         _currentLevel.LevelFinishTrigger.OnTriggerEnter += OnEndLevel;
         _player.gameObject.SetActive(true);
@@ -79,15 +87,17 @@ public class GameController : Singleton<GameController>
 
     private void OnEndLevel()
     {
+        UIManager.OpenActionWindow<CongratulationsActionWindow, IActionData>(_congratulationsData);
+
         InputController.DisableInput();
         _player.SetHurtAnimation(true);
     }
 
-    private void ClearLevel()
+    private void ClearLevelInternal()
     {
         _currentLevel.FallDeathTrigger.OnTriggerEnter -= OnFallDeath;
         _currentLevel.LevelFinishTrigger.OnTriggerEnter -= OnEndLevel;
-        Destroy(_currentLevel);
+        Destroy(_currentLevel.gameObject);
         _player.gameObject.SetActive(false);
     }
 

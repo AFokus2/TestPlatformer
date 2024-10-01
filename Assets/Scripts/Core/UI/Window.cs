@@ -2,17 +2,14 @@
 
 public class Window : MonoBehaviour
 {
-    private Animator _current;
-
     private bool _isActive;
 
     private void Awake()
     {
         gameObject.SetActive(false);
-        TryGetComponent(out _current);
     }
 
-    public void Open()
+    public virtual void Open()
     {
         if (_isActive)
             return;
@@ -21,7 +18,7 @@ public class Window : MonoBehaviour
         _isActive = true;
     }
 
-    public void Close()
+    public virtual void Close()
     {
         gameObject.SetActive(false);
         _isActive = false;

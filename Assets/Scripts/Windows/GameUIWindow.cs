@@ -1,18 +1,20 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
 public class GameUIWindow : Window
 {
-    // Start is called before the first frame update
-    void Start()
+    public void BackToMenu()
     {
-        
+        var actionWindowData = new ActionData();
+        actionWindowData.Data = "Your progress will not to be saved. Do you agree?";
+        actionWindowData.ConfirmButtonTitle = "To Menu";
+        actionWindowData.BackButtonTitle = "Back";
+        actionWindowData.ConfirmButton += CloseLevel;
+        actionWindowData.BackButton += UIManager.OpenWindow<GameUIWindow>;
+
+        UIManager.OpenActionWindow<YesNoActionWindow, IActionData>(actionWindowData);
     }
 
-    // Update is called once per frame
-    void Update()
+    private void CloseLevel()
     {
-        
+        GameController.ClearLevel();
+        UIManager.OpenWindow<MainMenuWindow>();
     }
 }

@@ -8,12 +8,8 @@ public class SelectLevelWindow : Window
 
     private List<LevelButton> _buttons = new();
 
-    public override void Open()
+    private void Start()
     {
-        base.Open();
-
-        ClearButtons();
-
         var levels = LevelsConfig.Instance.Levels;
 
         foreach(var levelInfo in levels) {

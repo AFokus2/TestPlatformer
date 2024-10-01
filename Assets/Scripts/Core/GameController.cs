@@ -44,7 +44,7 @@ public class GameController : Singleton<GameController>
 
     private void CollectCollectableInternal(BaseCollectableView collectable)
     {
-        var collectableValue = CollectablesConfig.Instance.Collectables.Find((collectableInfo) => collectableInfo.Type == collectable.Type).Value; 
+        var collectableValue = CollectablesConfig.Instance.Collectables.Find((collectableInfo) => collectableInfo.Type == collectable.Type).Value;
         PlayerPrefsHelper.AddMoney(collectableValue);
     }
 
@@ -101,14 +101,13 @@ public class GameController : Singleton<GameController>
 
     private void ClearLevelInternal()
     {
-        _currentLevel.FallDeathTrigger.OnTriggerEnter -= OnFallDeath;
-        _currentLevel.LevelFinishTrigger.OnTriggerEnter -= OnEndLevel;
-        Destroy(_currentLevel.gameObject);
+        if (_currentLevel)
+        {
+            _currentLevel.FallDeathTrigger.OnTriggerEnter -= OnFallDeath;
+            _currentLevel.LevelFinishTrigger.OnTriggerEnter -= OnEndLevel;
+            Destroy(_currentLevel.gameObject);
+        }
+        
         _player.gameObject.SetActive(false);
-    }
-
-    private void OnDestroy()
-    {
-        ClearLevel();
     }
 }

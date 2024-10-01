@@ -12,6 +12,11 @@ public class GameUIWindow : Window
         UIManager.OpenActionWindow<YesNoActionWindow, IActionData>(actionWindowData);
     }
 
+    public void ToShop()
+    {
+        UIManager.OpenWindow<ShopWindow>();
+    }
+
     private void CloseLevel()
     {
         GameController.ClearLevel();

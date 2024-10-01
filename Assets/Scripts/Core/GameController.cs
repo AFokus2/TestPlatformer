@@ -24,10 +24,7 @@ public class GameController : Singleton<GameController>
 
     public static void ClearLevel() => Instance.ClearLevelInternal();
 
-    public static void CollectCollectable(BaseCollectable collectable)
-    {
-
-    }
+    public static void CollectCollectable(BaseCollectableView collectable) => Instance.CollectCollectableInternal(collectable);
 
     public static void KillEnemy(BaseEnemyView enemy) => Instance.KillEnemyInternal(enemy);
 
@@ -45,8 +42,17 @@ public class GameController : Singleton<GameController>
         SpawnPlayer();
     }
 
+    private void CollectCollectableInternal(BaseCollectableView collectable)
+    {
+        var collectableValue = CollectablesConfig.Instance.Collectables.Find((collectableInfo) => collectableInfo.Type == collectable.Type).Value; 
+        PlayerPrefsHelper.AddMoney(collectableValue);
+    }
+
     private void KillEnemyInternal(BaseEnemyView enemy)
     {
+        var enemyKillCost = EnemiesConfig.Instance.Enemies.Find((enemyInfo) => enemyInfo.Type == enemy.Type).EnemyKillCost;
+        PlayerPrefsHelper.AddMoney(enemyKillCost);
+
         StartCoroutine(KillEnemyWithDelay(2f, enemy));
     }
 

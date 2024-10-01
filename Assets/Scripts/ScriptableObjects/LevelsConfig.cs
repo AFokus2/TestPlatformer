@@ -16,8 +16,3 @@ public class LevelInfo {
     public LevelView View;
     public bool Avaliable;
 }
-
-public enum Levels {
-    Level1,
-    ComingSoon
-}

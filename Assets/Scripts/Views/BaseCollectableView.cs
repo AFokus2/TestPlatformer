@@ -1,11 +1,14 @@
+using GameTypes;
 using UnityEngine;
 
 [RequireComponent(typeof(BaseTrigger))]
-public class BaseCollectable : MonoBehaviour
+public class BaseCollectableView : MonoBehaviour
 {
-    [SerializeField] private float _value;
+    [SerializeField] private CollectableTypes _type;
 
     private BaseTrigger _trigger;
+
+    public CollectableTypes Type => _type;
 
     private void Awake()
     {

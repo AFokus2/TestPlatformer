@@ -1,11 +1,8 @@
 using UnityEngine;
+using GameTypes;
 
 public class BaseEnemyView : MonoBehaviour
 {
-    public enum EnemyType {
-        Beatle
-    }
-
     [SerializeField] private EnemyType _type;
     [SerializeField] private LayerMask _playerLayer;
     [SerializeField] private BaseTrigger _deathTrigger;

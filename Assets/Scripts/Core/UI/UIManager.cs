@@ -23,10 +23,12 @@ public class UIManager : Singleton<UIManager>
             _associativeMapOfPrefabs.Add(window.GetType(),window);
         }
         
-        // if(!_associativeMapOfPrefabs.ContainsKey(typeof(MainMenuWindow))) 
-        //     return;
+        if(!_associativeMapOfPrefabs.ContainsKey(typeof(GameUIWindow))) 
+            return;
         
-        // OpenWindow<MainMenuWindow>();
+        OpenWindow<GameUIWindow>();
+
+        DontDestroyOnLoad(gameObject);
     }
 
     public static Window GetWindow<T>() where T : Window => Instance._associativeMapOfPrefabs[typeof(T)];

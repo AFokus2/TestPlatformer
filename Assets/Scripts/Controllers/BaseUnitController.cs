@@ -13,9 +13,11 @@ public abstract class BaseUnitController : MonoBehaviour
 
     protected bool _isGrounded;
     protected Rigidbody2D _rigidbody;
-    private bool _facingRight = true;
     private Vector3 _currentVelocity = Vector3.zero;
 
+    public int FacingDirection { get; private set; } = 1;
+
+    public bool MovementEnabled {get; set;} = true;
 
     protected virtual void Awake()
     {
@@ -29,12 +31,13 @@ public abstract class BaseUnitController : MonoBehaviour
 
     public virtual void Move(float move, bool jump)
     {
+        if(!MovementEnabled)
+            return;
+
         Vector3 targetVelocity = new Vector2(move * _moveSpeedForce, _rigidbody.velocity.y);
         _rigidbody.velocity = Vector3.SmoothDamp(_rigidbody.velocity, targetVelocity, ref _currentVelocity, _movementSmoothing);
 
-        if (move > 0 && !_facingRight)
-            Flip();
-        else if (move < 0 && _facingRight)
+        if ((move > 0 && FacingDirection == -1) || (move < 0 && FacingDirection == 1))
             Flip();
 
         if (_isGrounded && jump)
@@ -44,14 +47,18 @@ public abstract class BaseUnitController : MonoBehaviour
         }
     }
 
+    public virtual void Bounce() => _rigidbody.AddForce(new Vector2((int) Random.Range(-1f, 1f) * 100, _jumpForce / 2));
+
+    public virtual void Bounce(Vector2 direction) => _rigidbody.AddForce(direction);
+
     public virtual void MoveTo(Vector2 newPosition)
     {
         transform.position = newPosition;
     }
 
-    protected virtual void Flip()
+    public virtual void Flip()
     {
-        _facingRight = !_facingRight;
+        FacingDirection *= -1;
 
         Vector3 theScale = transform.localScale;
         theScale.x *= -1;
@@ -69,7 +76,7 @@ public abstract class BaseUnitController : MonoBehaviour
         }
     }
 
-    void OnDrawGizmos()
+    protected virtual void OnDrawGizmos()
     {
         if (!_debug)
             return;

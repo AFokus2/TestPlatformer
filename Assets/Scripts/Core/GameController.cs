@@ -1,3 +1,4 @@
+using System.Collections;
 using Cinemachine;
 using UnityEngine;
 
@@ -23,6 +24,15 @@ public class GameController : MonoBehaviour
 
     public static void Init(LevelView level) => Instance.InitInternal(level);
 
+    public static void CollectCollectable(BaseCollectable collectable)
+    {
+
+    }
+
+    public static void KillEnemy(BaseEnemyView enemy) => Instance.KillEnemyInternal(enemy);
+
+    public static void KillPlayer() => Instance.KillPlayerInternal();
+
     private void InitInternal(LevelView level)
     {
         // if (_currentLevel)
@@ -33,8 +43,22 @@ public class GameController : MonoBehaviour
         _currentLevel.LevelFinishTrigger.OnTriggerEnter += OnEndLevel;
     }
 
-    public static void CollectCollectable(BaseCollectable collectable) {
-        
+    private void KillEnemyInternal(BaseEnemyView enemy)
+    {
+        StartCoroutine(KillEnemyWithDelay(2f, enemy));
+    }
+
+    private IEnumerator KillEnemyWithDelay(float delay, BaseEnemyView enemy)
+    {
+        yield return new WaitForSeconds(delay);
+        Destroy(enemy.gameObject);
+    }
+
+    private void KillPlayerInternal()
+    {
+        InputController.DisableInput();
+        _player.SetHurtAnimation(true);
+        Invoke(nameof(RespawnPlayer), 1);
     }
 
     private void SpawnPlayer() => _player.MoveTo(_currentLevel.SpawnPoint.position);

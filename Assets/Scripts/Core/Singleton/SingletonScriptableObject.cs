@@ -10,7 +10,6 @@ public class SingletonScriptableObject<T> : ScriptableObject where T : Singleton
         {
             if (_instance == null)
             {
-                // Попытка загрузить объект из ресурсов
                 _instance = Resources.Load<T>($"Scriptables\\{typeof(T).Name}");
                 if (_instance == null)
                 {

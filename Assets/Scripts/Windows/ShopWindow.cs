@@ -38,7 +38,7 @@ public class ShopWindow : Window
     {
         if (PlayerPrefsHelper.GetMoneyCount() < info.Price)
             return;
-            
+
         PlayerPrefsHelper.SavePurchasing(info.Type);
         PlayerPrefsHelper.TakeMoney(info.Price);
 
@@ -67,5 +67,7 @@ public class ShopWindow : Window
 
         foreach (var product in _goods)
             product.UpdateView();
+
+        CharacterColorObserver.InvokeUpdate();
     }
 }

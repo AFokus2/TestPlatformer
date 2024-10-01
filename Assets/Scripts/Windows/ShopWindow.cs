@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using GameTypes;
 using UnityEngine;
 
 public class ShopWindow : Window
@@ -34,9 +36,36 @@ public class ShopWindow : Window
 
     private void OnBuyButtonClick(ProductInfo info)
     {
+        if (PlayerPrefsHelper.GetMoneyCount() < info.Price)
+            return;
+            
+        PlayerPrefsHelper.SavePurchasing(info.Type);
+        PlayerPrefsHelper.TakeMoney(info.Price);
+
+        foreach (var product in _goods)
+            product.UpdateView();
     }
 
     private void OnEquipButtonClick(ProductInfo info)
     {
+        var isEquiped = PlayerPrefsHelper.CheckIfEquiped(info.Type);
+
+        if (isEquiped)
+            PlayerPrefsHelper.SetUnequiped(info.Type);
+        else
+        {
+            foreach (var product in ShopConfig.Instance.Products)
+            {
+                if (product.Type == info.Type)
+                    continue;
+
+                PlayerPrefsHelper.SetUnequiped(product.Type);
+            }
+
+            PlayerPrefsHelper.SetEquiped(info.Type);
+        }
+
+        foreach (var product in _goods)
+            product.UpdateView();
     }
 }

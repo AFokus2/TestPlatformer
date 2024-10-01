@@ -20,33 +20,51 @@ public class ProductView : MonoBehaviour
 
     private ProductInfo _info;
 
-    public ProductInfo Info {
+    public ProductInfo Info
+    {
         get => _info;
-        set {
+        set
+        {
             _info = value;
             _productPicture.sprite = _info.ProductPricture;
             _price.text = _info.Price.ToString();
+            UpdateView();
         }
     }
 
 
-    private void Awake() {
+    private void Awake()
+    {
         _buyButton.onClick.AddListener(OnBuyPressed);
         _equipButton.onClick.AddListener(OnEquipPressed);
-    } 
+
+        if(_info != null)
+            UpdateView();
+    }
 
     private void OnBuyPressed()
     {
-        // if(_info.Avaliable)
-        //     OnClick.Invoke(_info);
+        OnBuyClick?.Invoke(_info);
     }
 
-    private void OnEquipPressed() {
-
+    private void OnEquipPressed()
+    {
+        OnEquipClick?.Invoke(_info);
     }
 
-    private void OnDestroy() {
+    public void UpdateView()
+    {
+        var isPurchased = PlayerPrefsHelper.CheckIfPurchased(_info.Type);
+
+        _buyButton.gameObject.SetActive(!isPurchased);
+        _equipButton.gameObject.SetActive(isPurchased);
+
+        _equipLabel.text = PlayerPrefsHelper.CheckIfEquiped(_info.Type) ? _unequipText : _equipText;
+    }
+
+    private void OnDestroy()
+    {
         _buyButton.onClick.RemoveAllListeners();
         _equipButton.onClick.RemoveAllListeners();
-    } 
+    }
 }

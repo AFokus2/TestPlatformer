@@ -23,6 +23,7 @@ public class GameController : Singleton<GameController>
         _congratulationsData = new ActionData();
         _congratulationsData.Data = "Congratulations!";
         _congratulationsData.ConfirmButtonTitle = "Yeeey";
+        _congratulationsData.ConfirmButton += InputController.EnableInput;
         _congratulationsData.ConfirmButton += ClearLevel;
         _congratulationsData.ConfirmButton += UIManager.OpenWindow<MainMenuWindow>;
         DontDestroyOnLoad(gameObject);

@@ -22,7 +22,4 @@ public static class PlayerPrefsHelper
     public static void SetEquiped(ShopProductType product) => PlayerPrefs.SetString($"{Enum.GetName(typeof(ShopProductType), product)} equiped", "true");
 
     public static void SetUnequiped(ShopProductType product) => PlayerPrefs.DeleteKey($"{Enum.GetName(typeof(ShopProductType), product)} equiped");
-
-    [MenuItem("PlayerPrefs/Clear PlayerPrefs")]
-    public static void ClearPrefs() => PlayerPrefs.DeleteAll();
 }

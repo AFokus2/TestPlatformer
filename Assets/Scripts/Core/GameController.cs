@@ -10,6 +10,14 @@ public class GameController : Singleton<GameController>
 
     private IActionData _congratulationsData;
 
+    private bool _playerInteractionsEnabled = true;
+
+    public bool PlayerInteractionsEnabled
+    {
+        get => _playerInteractionsEnabled;
+        set => _playerInteractionsEnabled = value;
+    }
+
     private void Awake()
     {
         _congratulationsData = new ActionData();
@@ -44,12 +52,18 @@ public class GameController : Singleton<GameController>
 
     private void CollectCollectableInternal(BaseCollectableView collectable)
     {
+        if (!_playerInteractionsEnabled)
+            return;
+
         var collectableValue = CollectablesConfig.Instance.Collectables.Find((collectableInfo) => collectableInfo.Type == collectable.Type).Value;
         PlayerPrefsHelper.AddMoney(collectableValue);
     }
 
     private void KillEnemyInternal(BaseEnemyView enemy)
     {
+         if (!_playerInteractionsEnabled)
+            return;
+            
         var enemyKillCost = EnemiesConfig.Instance.Enemies.Find((enemyInfo) => enemyInfo.Type == enemy.Type).EnemyKillCost;
         PlayerPrefsHelper.AddMoney(enemyKillCost);
 
@@ -64,6 +78,10 @@ public class GameController : Singleton<GameController>
 
     private void KillPlayerInternal()
     {
+         if (!_playerInteractionsEnabled)
+            return;
+            
+        PlayerInteractionsEnabled = false;
         InputController.DisableInput();
         _player.SetHurtAnimation(true);
         Invoke(nameof(RespawnPlayer), 1);
@@ -73,6 +91,7 @@ public class GameController : Singleton<GameController>
 
     private void RespawnPlayer()
     {
+        PlayerInteractionsEnabled = true;
         _player.SetHurtAnimation(false);
         SpawnPlayer();
         _camera.enabled = true;
@@ -83,6 +102,10 @@ public class GameController : Singleton<GameController>
 
     private void OnFallDeath()
     {
+         if (!_playerInteractionsEnabled)
+            return;
+            
+        PlayerInteractionsEnabled = false;
         InputController.DisableInput();
         _camera.LookAt = null;
         _camera.Follow = null;
@@ -93,6 +116,9 @@ public class GameController : Singleton<GameController>
 
     private void OnEndLevel()
     {
+         if (!_playerInteractionsEnabled)
+            return;
+            
         UIManager.OpenActionWindow<CongratulationsActionWindow, IActionData>(_congratulationsData);
 
         InputController.DisableInput();
@@ -107,7 +133,7 @@ public class GameController : Singleton<GameController>
             _currentLevel.LevelFinishTrigger.OnTriggerEnter -= OnEndLevel;
             Destroy(_currentLevel.gameObject);
         }
-        
+
         _player.gameObject.SetActive(false);
     }
 }
